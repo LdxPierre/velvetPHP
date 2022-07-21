@@ -18,10 +18,10 @@
 </head>
 <body>
 <div class="container">
-    
+
     <div class="d-flex justify-content-between mt-2">
         <h1 class="my-auto">Liste des disques (<?= count($tableau) ?>)</h1>
-        <a class="my-auto btn btn-primary disctext" href='disc_new.php'>Ajouter</a>
+                <a class="my-auto btn btn-primary disctext" href='disc_new.php'>Ajouter</a>
     </div>
 
     <div class="d-flex flex-wrap mt-2">

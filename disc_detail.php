@@ -62,8 +62,8 @@
         </div>
 
         <a class="btn btn-primary" href="discs.php">Retour</a>
-        <a class="btn btn-primary" href="disc_form.php?id=<?= $tableau -> disc_id ?>">Modifer</a>
         <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#deleteModal">Supprimer</a> <!-- Affiche une box de confirmation -->
+        <a class="btn btn-primary" href="disc_form.php?id=<?= $tableau -> disc_id ?>">Modifer</a>
 
     </div>
 

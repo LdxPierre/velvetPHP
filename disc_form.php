@@ -48,10 +48,14 @@
             <input class="form-control" type="number" step=".01" name='price' id="price" value="<?= $disc -> disc_price ?>" required>
             <label class="mt-2" for="picture">Picture</label>
             <input class="form-control" type="file" name="picture" id="picture">
-            <img class="my-2" src="IMG/jaquettes/<?= $disc -> disc_picture ?>">
+            
+            <div class="row">
+                <img class="col-sm-3 my-2" src="IMG/jaquettes/<?= $disc -> disc_picture ?>">
+            </div>
 
             <input class="btn btn-primary" type="button" value="Retour" onclick="document.location='disc_detail.php?id=<?= $disc -> disc_id ?>'">
             <input class="btn btn-primary" type="submit" value="Modifier">
+
         </form>
     </div>
 

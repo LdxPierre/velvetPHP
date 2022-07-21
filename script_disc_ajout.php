@@ -42,6 +42,10 @@ if (in_array($mimetype, $ftype)) {
     $error = false;
 } else {
     $error = true;
+    $error = true;
+    echo 'Format de fichier incorrect <br>';
+    echo '<a href="discs.php">Retour vers la liste de disques.</a><br>';
+    die ();
 }
 
 //Si aucune erreur
@@ -81,7 +85,9 @@ if ($error == false) {
         var_dump($requete -> queryString);
         var_dump($requete -> errorInfo());
         echo "Erreur : ".$requete -> errorInfo()[2]."<br>";
-        die("Fin du script (script_disc_ajout.php)");
+        echo 'Fin du script (script_disc_modif.php)<br>';
+        echo '<a href="discs.php">Retour vers la liste de disques.</a><br>';
+        die ();
     }
 
     //Redirection
@@ -90,7 +96,8 @@ if ($error == false) {
     exit;
 
 } else {
-    echo "ERREUR AJOUT";
+    echo "Erreur dans les saisies";
+    echo '<a href="discs.php">Retour vers la liste de disques.</a><br>';
+    die ();
 }
-
 ?>

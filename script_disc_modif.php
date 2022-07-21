@@ -35,6 +35,22 @@ if (isset($_POST['price']) && $_POST['price'] != "") {
     $error = true;
 }
 
+//Check format fichier si fichier présent
+if ($_FILES['picture']['size'] > 0) {
+    $ftype = array("image/jpeg", "image/jpg", "image/png");
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $mimetype = finfo_file($finfo, $_FILES["picture"]["tmp_name"]);
+    finfo_close($finfo);
+    if (in_array($mimetype, $ftype)) {
+        $error = false;
+    } else {
+        $error = true;
+        echo 'Format de fichier incorrect <br>';
+        echo '<a href="discs.php">Retour vers la liste de disques.</a><br>';
+        die ();
+    }
+}
+
 //Si aucune erreur
 if ($error == false) { 
 
@@ -43,17 +59,49 @@ if ($error == false) {
     $db = ConnexionBase();
 
     //Si fichier présent
-    if (sizeof($_FILES) > 0) {
+    if ($_FILES['picture']['size'] > 0) {
+
         //Suppression de l'ancienne img si elle existe
-        $requete = $db -> prepare("SELECT disc_picture FROM disc WHERE disc_id=?");
-        $requete->execute(array($disc_id));
-        $disc = $requete->fetch(PDO::FETCH_OBJ);
-        $requete->closeCursor();
+        try {
+            $requete = $db -> prepare("SELECT disc_picture FROM disc WHERE disc_id=?");
+            $requete->execute(array($disc_id));
+            $disc = $requete->fetch(PDO::FETCH_OBJ);
+            $requete->closeCursor();
+        }
+        catch (Exception $e) {
+            var_dump($requete -> queryString);
+            var_dump($requete -> errorInfo());
+            echo 'Erreur :' . $requete -> errorInfo()[2] . '<br>';
+            echo 'Fin du script (script_disc_modif.php)<br>';
+            echo '<a href="discs.php">Retour vers la liste de disques.</a><br>';
+            die ();
+        }
+
         if (file_exists("IMG/jaquettes/" . $disc -> disc_picture)) {
             unlink("IMG/jaquettes/". $disc -> disc_picture);
         }
+
         //Ajout de la nouvelle img
         move_uploaded_file($_FILES["picture"]["tmp_name"],"IMG/jaquettes/". $title);
+
+        //UPDATE disc_picture
+        try {
+            $requete = $db -> prepare("UPDATE disc SET disc_picture = :picture WHERE disc_id = :id");
+            $requete -> bindValue(":picture", $title, PDO::PARAM_STR);
+            $requete -> bindValue(":id", $disc_id, PDO::PARAM_STR);
+            $requete -> execute();
+            $requete -> closeCursor();
+        }
+
+        catch (Exception $e) {
+            echo 'Erreur lors de l\'update \'disc_picture\'';
+            var_dump($requete -> queryString);
+            var_dump($requete -> errorInfo());
+            echo 'Erreur :' . $requete -> errorInfo()[2] . '<br>';
+            echo 'Fin du script (script_disc_modif.php)<br>';
+            echo '<a href="discs.php">Retour vers la liste de disques.</a><br>';
+            die ();
+        }
     }
 
     try {
@@ -66,7 +114,7 @@ if ($error == false) {
 
         //UPDATE
         $requete = $db -> prepare("UPDATE disc
-            SET disc_title = :title, artist_id = :artist, disc_year = :year, disc_genre = :genre, disc_label = :label, disc_price = :price, disc_picture = :picture
+            SET disc_title = :title, artist_id = :artist, disc_year = :year, disc_genre = :genre, disc_label = :label, disc_price = :price
             WHERE disc_id= :disc_id");
         $requete -> bindValue(":title", $title, PDO::PARAM_STR);
         $requete -> bindValue(":artist", $artist, PDO::PARAM_STR);
@@ -74,17 +122,19 @@ if ($error == false) {
         $requete -> bindValue(":genre", $genre, PDO::PARAM_STR);
         $requete -> bindValue(":label", $label, PDO::PARAM_STR);
         $requete -> bindValue(":price", $price, PDO::PARAM_STR);
-        $requete -> bindValue(":picture", $title, PDO::PARAM_STR);
         $requete -> bindValue(":disc_id", $disc_id, PDO::PARAM_STR);
         $requete -> execute();
         $requete -> closeCursor();
     }
 
     catch (Exception $e) {
+        echo 'Erreur lors de l\'update disc';
         var_dump($requete -> queryString);
         var_dump($requete -> errorInfo());
-        echo "Erreur : ".$requete -> errorInfo()[2]."<br>";
-        die("Fin du script (script_disc_ajout.php)");
+        echo 'Erreur :' . $requete -> errorInfo()[2] . '<br>';
+        echo 'Fin du script (script_disc_modif.php)<br>';
+        echo '<a href="discs.php">Retour vers la liste de disques.</a><br>';
+        die ();
     }
 
     //Redirection
@@ -93,9 +143,8 @@ if ($error == false) {
     exit;
 
 } else {
-    echo "ERREUR AVANT L'UPDATE";
+    echo "Erreur dans les saisies";
+    echo '<a href="discs.php">Retour vers la liste de disques.</a><br>';
+    die ();
 }
-
-
-
 ?>

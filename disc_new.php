@@ -41,8 +41,8 @@
         <label class="form-label mt-2" for="picture">Picture</label>
         <input class="form-control" type="file" id="picture" name="picture" required>
 
-        <input class="btn btn-primary mt-2" type="submit" value="Ajouter">
         <input class="btn btn-primary mt-2" type="button" onclick="document.location='discs.php'" value="Retour">
+        <input class="btn btn-primary mt-2" type="submit" value="Ajouter">
     </form>
 
 </div>
